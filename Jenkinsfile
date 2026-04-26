@@ -2,7 +2,7 @@ pipeline {
     agent any
     
     environment {
-        DOCKER_REGISTRY = 'your-registry'
+        DOCKER_REGISTRY = 'docker.io/hawadwi'
         DOCKER_TAG = "${BUILD_NUMBER}"
         KUBECONFIG = '/var/run/secrets/kubernetes.io/serviceaccount/config'
     }
