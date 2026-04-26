@@ -87,18 +87,23 @@ pipeline {
             }
             steps {
                 echo "Pushing Docker images to registry..."
-                sh '''
-                    docker tag gudang-service:${DOCKER_TAG} ${DOCKER_REGISTRY}/gudang-service:${DOCKER_TAG}
-                    docker tag gudang-service:${DOCKER_TAG} ${DOCKER_REGISTRY}/gudang-service:latest
-                    docker tag courier-service:${DOCKER_TAG} ${DOCKER_REGISTRY}/courier-service:${DOCKER_TAG}
-                    docker tag courier-service:${DOCKER_TAG} ${DOCKER_REGISTRY}/courier-service:latest
-                    
-                    docker push ${DOCKER_REGISTRY}/gudang-service:${DOCKER_TAG}
-                    docker push ${DOCKER_REGISTRY}/gudang-service:latest
-                    docker push ${DOCKER_REGISTRY}/courier-service:${DOCKER_TAG}
-                    docker push ${DOCKER_REGISTRY}/courier-service:latest
-                '''
-            }
+            
+                withCredentials([usernamePassword(credentialsId: 'dockerhub-cred', usernameVariable: 'USER', passwordVariable: 'PASS')]) {
+                    sh '''
+                        echo $PASS | docker login -u $USER --password-stdin
+            
+                        docker tag gudang-service:${DOCKER_TAG} ${DOCKER_REGISTRY}/gudang-service:${DOCKER_TAG}
+                        docker tag gudang-service:${DOCKER_TAG} ${DOCKER_REGISTRY}/gudang-service:latest
+                        docker tag courier-service:${DOCKER_TAG} ${DOCKER_REGISTRY}/courier-service:${DOCKER_TAG}
+                        docker tag courier-service:${DOCKER_TAG} ${DOCKER_REGISTRY}/courier-service:latest
+            
+                        docker push ${DOCKER_REGISTRY}/gudang-service:${DOCKER_TAG}
+                        docker push ${DOCKER_REGISTRY}/gudang-service:latest
+                        docker push ${DOCKER_REGISTRY}/courier-service:${DOCKER_TAG}
+                        docker push ${DOCKER_REGISTRY}/courier-service:latest
+                    '''
+                }
+}
         }
 
         stage('7. Deploy di Kubernetes') {
