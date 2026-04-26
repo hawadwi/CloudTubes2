@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  gudang-service:
+    build:
+      context: ./gudang-service
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      - ENV=development
+    networks:
+      - warehouse
+
+  courier-service:
+    build:
+      context: ./courier-service
+      dockerfile: Dockerfile
+    ports:
+      - "8081:8081"
+    environment:
+      - ENV=development
+    networks:
+      - warehouse
+
+  postgres:
+    image: postgres:15-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: warehouse_db
+    networks:
+      - warehouse
+
+networks:
+  warehouse:
+    driver: bridge

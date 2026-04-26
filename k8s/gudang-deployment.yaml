@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gudang-service
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: gudang-service
+  template:
+    metadata:
+      labels:
+        app: gudang-service
+    spec:
+      containers:
+      - name: gudang-service
+        image: logistik-microservice-gudang-service:latest
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 8080
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 10
+          periodSeconds: 10
